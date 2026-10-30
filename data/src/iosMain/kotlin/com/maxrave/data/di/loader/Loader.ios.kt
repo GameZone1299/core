@@ -1,7 +1,5 @@
 package com.maxrave.data.di.loader
 
-actual fun loadMediaService() {
-}
+actual fun loadMediaService() {}
 
-actual fun loadLoginSyncModule() {
-}
+actual fun loadLoginSyncModule() {}

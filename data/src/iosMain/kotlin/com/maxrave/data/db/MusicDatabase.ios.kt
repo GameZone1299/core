@@ -1,6 +1,5 @@
 package com.maxrave.data.db
 
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.maxrave.common.DB_NAME
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,8 +9,9 @@ import platform.Foundation.NSUserDomainMask
 
 actual fun getDatabaseBuilder(converters: Converters): RoomDatabase.Builder<MusicDatabase> {
     val dbFilePath = documentDirectory() + "/$DB_NAME"
-    return Room.databaseBuilder<MusicDatabase>(
+    return androidx.room.Room.databaseBuilder<MusicDatabase>(
         name = dbFilePath,
+        factory = { MusicDatabaseConstructor.initialize() }
     ).addTypeConverter(converters)
 }
 

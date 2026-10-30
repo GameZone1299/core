@@ -13,24 +13,24 @@ object BrotliEncoder : ContentEncoder {
         source: ByteReadChannel,
         coroutineContext: CoroutineContext,
     ): ByteReadChannel {
-        TODO("Not yet implemented")
+        return source
     }
 
     override fun encode(
         source: ByteWriteChannel,
         coroutineContext: CoroutineContext,
     ): ByteWriteChannel {
-        TODO("Not yet implemented")
+        return source
     }
 
     override fun decode(
         source: ByteReadChannel,
         coroutineContext: CoroutineContext,
     ): ByteReadChannel {
-        TODO("Not yet implemented")
+        return source
     }
 }
 
 actual fun createBrotliEncoder(): ContentEncoder {
-    TODO("Not yet implemented")
+    return BrotliEncoder
 }

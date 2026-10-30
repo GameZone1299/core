@@ -147,13 +147,20 @@ internal class MessageCodec(
 
     private fun gzip(data: ByteArray): ByteArray {
         val sink = Buffer()
-        GzipSink(sink).buffer().use { it.write(data) }
+        val gzipSink = GzipSink(sink)
+        val bufferedSink = gzipSink.buffer()
+        bufferedSink.write(data)
+        bufferedSink.close()
         return sink.readByteArray()
     }
 
     private fun gunzip(data: ByteArray): ByteArray? =
         runCatching {
-            GzipSource(Buffer().apply { write(data) }).buffer().use { it.readByteArray() }
+            val source = GzipSource(Buffer().apply { write(data) })
+            val bufferedSource = source.buffer()
+            val bytes = bufferedSource.readByteArray()
+            bufferedSource.close()
+            bytes
         }.getOrNull()
 
     companion object {

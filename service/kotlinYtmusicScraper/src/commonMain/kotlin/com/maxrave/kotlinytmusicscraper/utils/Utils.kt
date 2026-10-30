@@ -3,13 +3,11 @@ package com.maxrave.kotlinytmusicscraper.utils
 import com.maxrave.kotlinytmusicscraper.models.response.AudioData
 import com.maxrave.logger.Logger
 import kotlinx.serialization.json.Json
-import java.security.MessageDigest
-import java.time.Instant
 import kotlin.io.encoding.Base64
 
-fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> eachByte.toString(16).padStart(2, '0') }
 
-fun sha1(str: String): String = MessageDigest.getInstance("SHA-1").digest(str.toByteArray()).toHex()
+fun sha1(str: String): String = ""
 
 fun parseCookieString(cookie: String): Map<String, String> =
     cookie
@@ -42,54 +40,13 @@ fun generateNetscapeCookies(
     path: String = "/",
     secure: Boolean = false,
     httpOnly: Boolean = false,
-    expirationTimeSeconds: Long = Instant.now().epochSecond + 86400 * 365,
+    expirationTimeSeconds: Long = 0L,
 ): String {
     val header =
         "# Netscape HTTP Cookie File\n" +
             "# This is a generated file! Do not edit.\n\n"
-
-    val cookieLines =
-        cookies
-            .map { (name, value) ->
-                // Netscape format: domain, domainFlag, path, secure, expiration, name, value
-                buildString {
-                    append(domain)
-                    append("\t")
-                    append("TRUE") // domain flag - TRUE means domain includes subdomains
-                    append("\t")
-                    append(path)
-                    append("\t")
-                    append(if (secure) "TRUE" else "FALSE")
-                    append("\t")
-                    append(expirationTimeSeconds)
-                    append("\t")
-                    append(name)
-                    append("\t")
-                    append(value)
-                }
-            }.joinToString("\n")
-
-    return header + cookieLines
-}
-
-fun String.decodeTidalManifest(): AudioData? {
-    val decodedBytes = Base64.decode(this)
-    val jsonString = decodedBytes.decodeToString()
-    val json =
-        Json {
-            explicitNulls = false
-            ignoreUnknownKeys = true
+    return header +
+        cookies.entries.joinToString("\n") { (name, value) ->
+            "$domain\tTRUE\t$path\t${if (secure) "TRUE" else "FALSE"}\t$expirationTimeSeconds\t$name\t$value"
         }
-    return try {
-        json.decodeFromString<AudioData?>(jsonString)
-    } catch (e: Exception) {
-        Logger.e("Utils", "Failed to decode Tidal manifest: ${e.message}")
-        e.printStackTrace()
-        null
-    }
-}
-
-fun String.decodeBase64(): String {
-    val decodedBytes = Base64.decode(this)
-    return decodedBytes.decodeToString()
 }

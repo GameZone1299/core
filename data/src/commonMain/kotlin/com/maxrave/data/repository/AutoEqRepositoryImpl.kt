@@ -1,5 +1,7 @@
 package com.maxrave.data.repository
 
+import kotlinx.coroutines.IO
+
 import com.maxrave.data.db.datasource.LocalDataSource
 import com.maxrave.domain.data.entities.AutoEqCurveEntity
 import com.maxrave.domain.data.entities.AutoEqEntryEntity
